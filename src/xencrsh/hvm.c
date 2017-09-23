@@ -56,6 +56,7 @@ __declspec(allocate("hypercall"))
 static UCHAR    __HypercallSection[(MAXIMUM_HYPERCALL_PFN_COUNT + 1) * PAGE_SIZE];
 
 #define XEN_SIGNATURE   "XenVMMXenVMM"
+#define XEN_SIGSPOOF    "ZenZenZenZen"
 
 static ULONG            __BaseLeaf = 0x40000000;
 static USHORT           __MajorVersion;
@@ -142,6 +143,9 @@ __InitHypercallPage()
         *((PULONG)(Signature + 8)) = edx;
 
         if (strcmp(Signature, XEN_SIGNATURE) == 0 &&
+            eax >= __BaseLeaf + 2)
+            break;
+        if (strcmp(Signature, XEN_SIGSPOOF) == 0 &&
             eax >= __BaseLeaf + 2)
             break;
 
